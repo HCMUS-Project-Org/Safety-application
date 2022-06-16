@@ -14,6 +14,7 @@ class LoginForm(FlaskForm):
         InputRequired(), Email("Please enter your email address.")], render_kw={"placeholder": "Email"})
     password = PasswordField("Password", validators=[
                              InputRequired()], render_kw={"placeholder": "Password"})
+    show_password = BooleanField('Show password', id='check')
     submit = SubmitField('SIGN IN')
 
 

@@ -1,13 +1,43 @@
-{% extends "base.html" %} {% block title %}Login{%endblock%} {% block style %}
+{% extends "base.html" %}
+
+<!-- ------------------------ -->
+{% block title %}Login{%endblock%}
+
+<!-- ------------------------ -->
+{% block style %}
 <link rel="stylesheet" href="../static/css/authen.css" />
-{% endblock %} {% block body %}
+{% endblock %}
+
+<!-- ------------------------ -->
+{% block body %}
 <div class="container-c">
 	<h1 class="mb-5 fw-bolder">Sign In</h1>
 	<form method="POST" action="" class="d-flex flex-column">
-		{{form.hidden_tag()}} {{form.email}} {{form.password}}
+		{{form.hidden_tag()}} {{form.email}}
+
+		<div class="d-flex align-items-center justify-content-center gap-4">
+			{{form.password}} {{form.show_password}}
+		</div>
 		<div class="error">{{error}}</div>
 		{{form.submit}}
 	</form>
 	<a href="{{url_for('register')}}">Register</a>
 </div>
+{% endblock %}
+
+<!-- ------------------------ -->
+{% block script %}
+<script>
+	window.addEventListener("load", function () {
+		const checkbox = document.getElementById(`{{form.show_password.id}}`);
+		const passwrd = document.getElementById(`{{form.password.id}}`);
+		checkbox.addEventListener("change", function () {
+			if (this.checked) {
+				passwrd.type = "text";
+			} else {
+				passwrd.type = "password";
+			}
+		});
+	});
+</script>
 {% endblock %}
