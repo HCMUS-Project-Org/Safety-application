@@ -12,4 +12,23 @@ TASK 1:
 	ref: 
 		- https://nitratine.net/blog/post/how-to-hash-passwords-in-python/
 		- https://medium.com/@pYdeas/the-point-of-salting-and-hashing-passwords-demonstrated-with-python-4879a156d99a
+
 ---------------------------------------
+
+TASK 2:
+	gen RSA_PubKey and RSA_PriKey (RSA) (length 2048)
+	
+	RSA_PriKey -> encode(AES)
+		- AES_PriKey(passphrase)
+		
+	storage: 
+		- RSA_PriKey.encode(AES_PubKey())
+		- RSA_PubKey
+		
+	ref: 
+		- AES: https://blog.boot.dev/cryptography/aes-256-cipher-python-cryptography-examples/
+		- RSA: https://cryptobook.nakov.com/asymmetric-key-ciphers/rsa-encrypt-decrypt-examples
+		- RSA: https://stackoverflow.com/questions/30056762/rsa-encryption-and-decryption-in-python
+	
+
+
