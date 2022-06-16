@@ -1,0 +1,15 @@
+
+TASK 1:
+	salt = random(32 byte)
+	hash_pass = hash(passwd + salt)
+
+	storage: passwd = salt + hash_pass
+
+	get hash_pass and salt: 
+		salt = passwd[:32]  (because salt length is 32)
+		hash_pass = passwd[32:]
+		
+	ref: 
+		- https://nitratine.net/blog/post/how-to-hash-passwords-in-python/
+		- https://medium.com/@pYdeas/the-point-of-salting-and-hashing-passwords-demonstrated-with-python-4879a156d99a
+---------------------------------------

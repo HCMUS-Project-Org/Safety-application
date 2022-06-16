@@ -1,0 +1,13 @@
+{% extends "base.html" %} {% block title %}Login{%endblock%} {% block style %}
+<link rel="stylesheet" href="../static/css/authen.css" />
+{% endblock %} {% block body %}
+<div class="container-c">
+	<h1 class="mb-5 fw-bolder">Sign In</h1>
+	<form method="POST" action="" class="d-flex flex-column">
+		{{form.hidden_tag()}} {{form.email}} {{form.password}}
+		<div class="error">{{error}}</div>
+		{{form.submit}}
+	</form>
+	<a href="{{url_for('register')}}">Register</a>
+</div>
+{% endblock %}
