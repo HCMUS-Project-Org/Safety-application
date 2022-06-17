@@ -18,18 +18,26 @@ def unpad(s):
 
 def gen_RSA_key_pem():
     key = RSA.generate(2048)
-    return key
+    pub_key_pem = key.publickey().exportKey().decode()
+    priv_key_pem = key.exportKey().decode()
+    return pub_key_pem, priv_key_pem
 
 
-def RSA_encrypt(plain_text, pub_key):
-    encryptor = PKCS1_OAEP.new(pub_key)
+def RSA_encrypt(plain_text, pub_key_pem):
+    public_key = RSA.importKey(pub_key_pem)
+    public_key = RSA.construct((public_key.n, public_key.e))
+
+    encryptor = PKCS1_OAEP.new(public_key)
     encrypted = encryptor.encrypt(plain_text.encode("utf-8"))
 
     return encrypted
 
 
-def RSA_decrypt(cipher_text, key_pair):
-    decryptor = PKCS1_OAEP.new(key_pair)
+def RSA_decrypt(cipher_text, priv_key_pem):
+    private_key = RSA.importKey(priv_key_pem)
+    private_key = RSA.construct((private_key.n, private_key.e, private_key.d))
+
+    decryptor = PKCS1_OAEP.new(private_key)
     decrypted = decryptor.decrypt(cipher_text).decode("utf-8")
 
     return decrypted
@@ -52,32 +60,23 @@ def AES_decrypt(cipher_text, passphrase):
 
 
 if __name__ == "__main__":
-    # test RSA
-    key = gen_RSA_key_pem()
+    # get RSA pair key PEM
+    publickeyPEM, privatekeyPEM = gen_RSA_key_pem()
 
-    # privatekey = RSA.importKey(privatekeyPEM)
-    # publickey = RSA.importKey(publickeyPEM)
+    # encrypt Priv_ley_PEM with AES
+    encrypted_priv_key = AES_encrypt(privatekeyPEM, "my password")
 
-    # print("RSA private key: ")
-    # print("  n =", privatekey.n)
-    # print("  d =", privatekey.d)
+    # decrypt Priv_ley_PEM with AES
+    decrypted_priv_key = AES_decrypt(encrypted_priv_key, "my password")
 
-    # print("\nRSA public key: ")
-    # print("  n =", publickey.n)
-    # print("  e =", publickey.e)
-    mess = "encrypt me"
-    publickey = key.publickey()
-    # privateKey = key.key
-    cipher_text = RSA_encrypt(mess, publickey)
-    plain_text = RSA_decrypt(cipher_text, key)
-    print("cipher text:", cipher_text)
-    print("plain text:", plain_text)
+    mess = "encrypt RSA private key"
 
-    print("-------------------------")
+    # encrypt Priv_ley_PEM with RSA
+    cipher_text = RSA_encrypt(mess, publickeyPEM)
 
-    # test AES
-    encrypted = AES_encrypt("This is a secret message", "my password")
-    decrypted = AES_decrypt(encrypted, "my password")
-
-    print("AES encrypt: {}".format(encrypted))
-    print("AES decrypt: {}".format(bytes.decode(decrypted)))
+    try:
+        # decrypt Priv_ley_PEM with RSA
+        plain_text = RSA_decrypt(cipher_text, decrypted_priv_key)
+        print("plain text:", plain_text)
+    except:
+        print("decrypt RSA private key failed")
