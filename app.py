@@ -106,8 +106,8 @@ def home():
     # authorize user
     if 'user' in session:
         user = json.loads(session["user"])
-        changeInfoForm = ChangeInfoForm()
-        return render_template('home.html', changeInfoForm=changeInfoForm, user=user)
+        form = ChangeInfoForm()
+        return render_template('home.html', form=form, user=user)
     else:
         return redirect(url_for('login'))
 

@@ -19,7 +19,7 @@
 				class="d-flex flex-column align-items-center justify-content-center"
 			>
 				<img src="../static/img/avatar.jpg" alt="logo" class="img-fluid" />
-				{{user.name}}
+				<div class="text-center">{{user.name}}</div>
 			</div>
 
 			<!-- Button trigger modal -->
@@ -31,12 +31,8 @@
 			>
 				Change information
 			</button>
-			<!-- <a class="btn-logout" href="{{url_for('logout')}}">
-				Logout
-			</a> -->
-			<button class="btn-logout" onclick="logout()">
-				Logout
-				</button>
+
+			<button class="btn-logout" onclick="logout()">Logout</button>
 			<!-- Modal -->
 			<div
 				class="modal fade"
@@ -45,51 +41,55 @@
 				aria-labelledby="exampleModalLabel"
 				aria-hidden="true"
 			>
-			<form method="POST" action="" class="d-flex flex-column"></form>
-				<div class="modal-dialog modal-dialog-centered">
-					<div class="modal-content">
-						<div class="modal-header">
-							<h2 class="modal-title" id="exampleModalLabel">
-								Change {{user.name}}'s information
-							</h2>
-							<button
-								type="button"
-								class="btn-close"
-								data-bs-dismiss="modal"
-								aria-label="Close"
-							></button>
-						</div>
-						<div class="modal-body">
-							{{changeInfoForm.email}} {{changeInfoForm.name}}
-							{{changeInfoForm.phone}} {{changeInfoForm.address}}
-							{{changeInfoForm.password}}
-							{{changeInfoForm.show_password}}
-						</div>
-						<div class="modal-footer">
-							<button
-								type="button"
-								class="btn btn-secondary"
-								data-bs-dismiss="modal"
-							>
-								Close
-							</button>
-							{{changeInfoForm.submit}}
+				<form method="POST" action="" class="d-flex flex-column">
+					<div class="modal-dialog modal-dialog-centered">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h2 class="modal-title" id="exampleModalLabel">
+									Change {{user.name}}'s information
+								</h2>
+								<button
+									type="button"
+									class="btn-close"
+									data-bs-dismiss="modal"
+									aria-label="Close"
+								></button>
+							</div>
+							<div class="modal-body p-3 px-4">
+								{{form.hidden_tag()}} {{form.email(value=user.email)}}
+								{{form.name(value=user.name)}}
+								{{form.phone(value=user.phone)}}
+								{{form.address(value=user.address)}}
+								<div class="d-flex align-items-center gap-4">
+									{{form.password}} {{form.show_password}}
+								</div>
+							</div>
+							<div class="modal-footer">
+								<div class="d-flex gap-4">
+									<button
+										type="button"
+										class="btn-cancel"
+										data-bs-dismiss="modal"
+									>
+										Cancel
+									</button>
+									{{form.submit}}
+								</div>
+							</div>
 						</div>
 					</div>
-				</div>
-			</form>
+				</form>
 			</div>
 		</div>
 	</div>
 </div>
 {% endblock %}
 
-
 <!-- ------------------------ -->
 {% block script %}
 <script>
 	function logout() {
-		document.location.href="{{url_for('logout')}}";
+		document.location.href = "{{url_for('logout')}}";
 	}
 </script>
 {% endblock %}

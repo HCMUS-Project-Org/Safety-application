@@ -31,11 +31,15 @@ TASK 2:
 		- RSA: https://stackoverflow.com/questions/30056762/rsa-encryption-and-decryption-in-python
 		- RSA: https://stackoverflow.com/questions/70841986/how-to-add-a-custom-rsa-key-pair-to-a-pem-file
 		
----------------------------------
+---------------------------------------
+
 AUTHEN and AUTHOR
 	- Use session to authorize
 	- If autheN success then write user info into session
 	- If logout -> clear user session
-	
+
+---------------------------------------
+
+TASK 3:	
 
 

@@ -24,20 +24,3 @@
 	<a href="{{url_for('login')}}">Login</a>
 </div>
 {% endblock %}
-
-<!-- ------------------------ -->
-{% block script %}
-<script>
-	window.addEventListener("load", function () {
-		const checkbox = document.getElementById(`{{form.show_password.id}}`);
-		const passwrd = document.getElementById(`{{form.password.id}}`);
-		checkbox.addEventListener("change", function () {
-			if (this.checked) {
-				passwrd.type = "text";
-			} else {
-				passwrd.type = "password";
-			}
-		});
-	});
-</script>
-{% endblock %}

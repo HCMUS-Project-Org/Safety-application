@@ -38,7 +38,13 @@ form input {
 	box-shadow: rgba(0, 0, 0, 0.1) 0px 10px 50px;
 }
 
-form input[type="submit"] {
+form input:focus {
+	outline: rgb(189, 89, 212) solid 2px;
+	box-shadow: rgb(189, 89, 212) 0px 10px 50px;
+}
+
+form input[type="submit"],
+button {
 	background: #bd59d4;
 	color: white;
 	font-weight: bolder;
@@ -46,11 +52,13 @@ form input[type="submit"] {
 	width: 180px;
 	padding: 0px;
 	margin: 30px auto;
+	border: none;
 	box-shadow: rgb(189, 89, 212) 0px 10px 50px;
 	transition: 0.5s all;
 }
 
-form input[type="submit"]:hover {
+form input[type="submit"]:hover,
+button:hover {
 	background: #5c2668;
 }
 
