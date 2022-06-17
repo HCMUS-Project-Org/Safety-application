@@ -5,16 +5,7 @@ from wtforms.validators import (DataRequired, Email, InputRequired, Length,
                                 Regexp)
 
 
-class LoginForm(FlaskForm):
-    email = EmailField("Email",  validators=[
-        InputRequired(), Email("Please enter your email address.")], render_kw={"placeholder": "Email"})
-    password = PasswordField("Password", validators=[
-                             InputRequired()], render_kw={"placeholder": "Password"})
-    show_password = BooleanField('Show password', id='check')
-    submit = SubmitField('SIGN IN')
-
-
-class RegisterForm(FlaskForm):
+class ChangeInfoForm(FlaskForm):
     email = EmailField("Email",  validators=[
         InputRequired(), Email("Please enter your email address.")], render_kw={"placeholder": "Email"})
     name = StringField("Name",  validators=[InputRequired(),
@@ -26,4 +17,4 @@ class RegisterForm(FlaskForm):
     password = PasswordField("Password", validators=[InputRequired()], render_kw={
         "placeholder": "Password"}, id="password")
     show_password = BooleanField('Show password', id='check')
-    submit = SubmitField('SIGN UP')
+    submit = SubmitField('CHANGE')

@@ -2,10 +2,12 @@ import os
 import authen
 import cryptography
 from form.authenForm import LoginForm, RegisterForm
+from form.changeInfoForm import ChangeInfoForm
 
 try:
     from dotenv import load_dotenv
-    from flask import Flask, redirect, render_template, request, url_for
+    from flask import Flask, redirect, render_template, request, url_for, session
+    import json
     from flask_bootstrap import Bootstrap
     from pymongo import MongoClient
 
@@ -56,6 +58,9 @@ def login():
             return render_template("login.html", form=form, error="Email does not exist.")
 
         if authen.verify_password(passwd, user["password"]):
+
+            user = json.dumps(user, default=str)
+            session["user"] = user
             return redirect(url_for('home'))
         else:
             return render_template("login.html", form=form, error="Password is incorrect.")
@@ -96,7 +101,21 @@ def register():
 
 @ app.route('/home', methods=['GET', 'POST'])
 def home():
-    return render_template('home.html')
+    app.logger.info("----- HOME --------")
+
+    # authorize user
+    if 'user' in session:
+        user = json.loads(session["user"])
+        changeInfoForm = ChangeInfoForm()
+        return render_template('home.html', changeInfoForm=changeInfoForm, user=user)
+    else:
+        return redirect(url_for('login'))
+
+
+@app.route("/logout")
+def logout():
+    session.pop('user', None)
+    return redirect(url_for('login'))
 
 
 if __name__ == '__main__':

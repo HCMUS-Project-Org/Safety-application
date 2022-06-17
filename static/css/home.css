@@ -1,0 +1,46 @@
+img {
+	width: 75px;
+	height: 75px;
+	border-radius: 50%;
+}
+
+h1 {
+	font-size: 52px;
+}
+
+.btn-change-info {
+	background: #bd59d4;
+	color: white;
+	font-weight: bolder;
+	border-radius: 8px;
+	width: 220px;
+	height: 50px;
+	border-width: 0px;
+	padding: 0px;
+	margin: 30px auto;
+	box-shadow: rgb(189, 89, 212) 0px 10px 50px;
+	transition: 0.5s all;
+}
+
+.btn-change-info:hover {
+	background: #5c2668;
+}
+
+.btn-logout {
+	width: 80px;
+	height: 50px;
+	background: red;
+	color: white;
+	font-weight: bolder;
+	border-radius: 8px;
+	padding: auto;
+	border: none;
+	box-shadow: red 0px 10px 50px;
+	transition: 0.5s all;
+}
+
+.btn-logout:hover {
+	background: rgb(163, 0, 0);
+	color: white;
+	text-decoration: none;
+}

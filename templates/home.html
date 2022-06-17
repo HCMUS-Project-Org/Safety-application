@@ -1,7 +1,95 @@
-{% extends "base.html" %} {% block title %}Login{%endblock%} {% block style %}
-<link rel="stylesheet" href="../static/authen.css" />
-{% endblock %} {% block body %}
+{% extends "base.html" %}
+
+<!-- ------------------------ -->
+{% block title %}Login{%endblock%}
+
+<!-- ------------------------ -->
+{% block style %}
+<link rel="stylesheet" href="../static/css/home.css" />
+<link rel="stylesheet" href="../static/css/authen.css" />
+{% endblock %}
+
+<!-- ------------------------ -->
+{% block body %}
 <div class="container-c">
-	<h1 class="mb-5 fw-bolder">Home</h1>
+	<div class="d-flex flex-column align-items-center justify-content-center">
+		<h1 class="fw-bolder">Home</h1>
+		<div class="d-flex align-items-center justify-content-center gap-3">
+			<div
+				class="d-flex flex-column align-items-center justify-content-center"
+			>
+				<img src="../static/img/avatar.jpg" alt="logo" class="img-fluid" />
+				{{user.name}}
+			</div>
+
+			<!-- Button trigger modal -->
+			<button
+				type="button"
+				class="btn-change-info"
+				data-bs-toggle="modal"
+				data-bs-target="#exampleModal"
+			>
+				Change information
+			</button>
+			<!-- <a class="btn-logout" href="{{url_for('logout')}}">
+				Logout
+			</a> -->
+			<button class="btn-logout" onclick="logout()">
+				Logout
+				</button>
+			<!-- Modal -->
+			<div
+				class="modal fade"
+				id="exampleModal"
+				tabindex="-1"
+				aria-labelledby="exampleModalLabel"
+				aria-hidden="true"
+			>
+			<form method="POST" action="" class="d-flex flex-column"></form>
+				<div class="modal-dialog modal-dialog-centered">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h2 class="modal-title" id="exampleModalLabel">
+								Change {{user.name}}'s information
+							</h2>
+							<button
+								type="button"
+								class="btn-close"
+								data-bs-dismiss="modal"
+								aria-label="Close"
+							></button>
+						</div>
+						<div class="modal-body">
+							{{changeInfoForm.email}} {{changeInfoForm.name}}
+							{{changeInfoForm.phone}} {{changeInfoForm.address}}
+							{{changeInfoForm.password}}
+							{{changeInfoForm.show_password}}
+						</div>
+						<div class="modal-footer">
+							<button
+								type="button"
+								class="btn btn-secondary"
+								data-bs-dismiss="modal"
+							>
+								Close
+							</button>
+							{{changeInfoForm.submit}}
+						</div>
+					</div>
+				</div>
+			</form>
+			</div>
+		</div>
+	</div>
 </div>
+{% endblock %}
+
+
+<!-- ------------------------ -->
+{% block script %}
+<script>
+	function logout() {
+		document.location.href="{{url_for('logout')}}";
+	}
+</script>
 {% endblock %}
