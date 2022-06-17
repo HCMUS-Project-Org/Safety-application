@@ -1,5 +1,6 @@
 import os
 import authen
+import cryptography
 from form.authenForm import LoginForm, RegisterForm
 
 try:
@@ -74,15 +75,21 @@ def register():
         if (authen.check_email_exists(request.form.get("email"))):
             return render_template("register.html", form=form, error="Email exist.")
 
+        public_key, private_key = cryptography.gen_user_RSA_key_pem(
+            hash_passwd)
+
         user = {
             "email": form.email.data,
             "name": form.name.data,
             "phone": form.phone.data,
             "address": form.address.data,
-            "password": hash_passwd
+            "password": hash_passwd,
+            "public_key": public_key,
+            "private_key": private_key
         }
 
         db.users.insert_one(user)
+
         return redirect(url_for('login'))
     return render_template('register.html', form=form)
 

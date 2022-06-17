@@ -59,6 +59,14 @@ def AES_decrypt(cipher_text, passphrase):
     return unpad(cipher.decrypt(cipher_text[16:]))
 
 
+def gen_user_RSA_key_pem(passphrase):
+    pub_key_pem, priv_key_pem = gen_RSA_key_pem()
+
+    encrypted_priv_key = AES_encrypt(priv_key_pem, passphrase)
+
+    return pub_key_pem, encrypted_priv_key
+
+
 if __name__ == "__main__":
     # get RSA pair key PEM
     publickeyPEM, privatekeyPEM = gen_RSA_key_pem()
@@ -69,6 +77,7 @@ if __name__ == "__main__":
     # decrypt Priv_ley_PEM with AES
     decrypted_priv_key = AES_decrypt(encrypted_priv_key, "my password")
 
+    print("decrypted_priv_key", decrypted_priv_key)
     mess = "encrypt RSA private key"
 
     # encrypt Priv_ley_PEM with RSA
