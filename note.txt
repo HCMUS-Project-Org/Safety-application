@@ -23,7 +23,7 @@ TASK 2:
 		
 	storage: 
 		- RSA_PriKey_PEM.encode(AES_PubKey())
-		- RSA_PubKey_PEM
+		- RSA_PubKey_PEM.encode("utf-8")
 		
 	ref: 
 		- AES: https://blog.boot.dev/cryptography/aes-256-cipher-python-cryptography-examples/

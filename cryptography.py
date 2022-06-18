@@ -16,6 +16,14 @@ def unpad(s):
     return s[:-ord(s[len(s) - 1:])]
 
 
+def byte_string_to_string(byte_string):
+    return byte_string.strip("b'").replace("\\n", "\n")
+
+
+def byte_string_to_byte(byte_string):
+    return bytes(byte_string.strip("b'"), "ascii")
+
+
 def gen_RSA_key_pem():
     key = RSA.generate(2048)
     pub_key_pem = key.publickey().exportKey().decode()
@@ -23,7 +31,16 @@ def gen_RSA_key_pem():
     return pub_key_pem, priv_key_pem
 
 
+def gen_user_RSA_key_pem(passphrase):
+    pub_key_pem, priv_key_pem = gen_RSA_key_pem()
+    encrypted_priv_key = AES_encrypt(priv_key_pem, passphrase)
+    return pub_key_pem.encode(), encrypted_priv_key, priv_key_pem
+
+
 def RSA_encrypt(plain_text, pub_key_pem):
+    if type(pub_key_pem) == str:
+        pub_key_pem = byte_string_to_string(pub_key_pem)
+
     public_key = RSA.importKey(pub_key_pem)
     public_key = RSA.construct((public_key.n, public_key.e))
 
@@ -34,6 +51,7 @@ def RSA_encrypt(plain_text, pub_key_pem):
 
 
 def RSA_decrypt(cipher_text, priv_key_pem):
+
     private_key = RSA.importKey(priv_key_pem)
     private_key = RSA.construct((private_key.n, private_key.e, private_key.d))
 
@@ -52,6 +70,10 @@ def AES_encrypt(plain_text, passphrase):
 
 
 def AES_decrypt(cipher_text, passphrase):
+    if type(cipher_text) == str:
+        # convert to byte
+        cipher_text = byte_string_to_byte(cipher_text)
+
     private_key = hashlib.sha256(passphrase.encode("utf-8")).digest()
     cipher_text = base64.b64decode(cipher_text)
     iv = cipher_text[:16]
@@ -59,17 +81,12 @@ def AES_decrypt(cipher_text, passphrase):
     return unpad(cipher.decrypt(cipher_text[16:]))
 
 
-def gen_user_RSA_key_pem(passphrase):
-    pub_key_pem, priv_key_pem = gen_RSA_key_pem()
-
-    encrypted_priv_key = AES_encrypt(priv_key_pem, passphrase)
-
-    return pub_key_pem, encrypted_priv_key
-
-
 if __name__ == "__main__":
     # get RSA pair key PEM
     publickeyPEM, privatekeyPEM = gen_RSA_key_pem()
+
+    print(publickeyPEM)
+    print(type(publickeyPEM))
 
     # encrypt Priv_ley_PEM with AES
     encrypted_priv_key = AES_encrypt(privatekeyPEM, "my password")
@@ -77,7 +94,7 @@ if __name__ == "__main__":
     # decrypt Priv_ley_PEM with AES
     decrypted_priv_key = AES_decrypt(encrypted_priv_key, "my password")
 
-    print("decrypted_priv_key", decrypted_priv_key)
+    print("decrypted_priv_key: ", decrypted_priv_key)
     mess = "encrypt RSA private key"
 
     # encrypt Priv_ley_PEM with RSA

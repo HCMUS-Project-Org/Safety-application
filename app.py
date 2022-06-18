@@ -3,6 +3,7 @@ import authen
 import cryptography
 from form.authenForm import LoginForm, RegisterForm
 from form.changeInfoForm import ChangeInfoForm
+import changeInfo
 
 try:
     from dotenv import load_dotenv
@@ -15,7 +16,8 @@ except:
     os.system("pip install -r requirements.txt")
     # import again
     from dotenv import load_dotenv
-    from flask import Flask, redirect, render_template, request, url_for
+    from flask import Flask, redirect, render_template, request, url_for, session
+    import json
     from flask_bootstrap import Bootstrap
     from pymongo import MongoClient
 
@@ -33,8 +35,11 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = SECRET_KEY
 
 # connect to mongoDB
+# try:
 client = MongoClient(MONGO_URI, int(MONGO_PORT))
 db = client.myDatabase  # database name
+# except:
+#     app.logger.error("Can not connect MongoDB")
 
 Bootstrap(app)
 
@@ -74,23 +79,25 @@ def register():
 
     if request.method == "POST":
         passwd = request.form.get("password")
-        hash_passwd = authen.salt_hash256(passwd)
+        passphrase = authen.salt_hash256(passwd)
 
         # check if email exists
         if (authen.check_email_exists(request.form.get("email"))):
             return render_template("register.html", form=form, error="Email exist.")
 
-        public_key, private_key = cryptography.gen_user_RSA_key_pem(
-            hash_passwd)
+        public_key, private_key, pri = cryptography.gen_user_RSA_key_pem(
+            passphrase)
 
         user = {
             "email": form.email.data,
             "name": form.name.data,
             "phone": form.phone.data,
             "address": form.address.data,
-            "password": hash_passwd,
+            "password": passphrase,
+            "pass": passwd,
             "public_key": public_key,
-            "private_key": private_key
+            "private_key": private_key,
+            "private_key_dec": pri
         }
 
         db.users.insert_one(user)
@@ -104,12 +111,42 @@ def home():
     app.logger.info("----- HOME --------")
 
     # authorize user
-    if 'user' in session:
-        user = json.loads(session["user"])
-        form = ChangeInfoForm()
-        return render_template('home.html', form=form, user=user)
-    else:
+    if not 'user' in session:
         return redirect(url_for('login'))
+
+    user = json.loads(session["user"])
+    form = ChangeInfoForm()
+
+    app.logger.info("-----------")
+
+    cipher_text = cryptography.RSA_encrypt(
+        "hello sssd", user["public_key"])
+
+    try:
+        # decrypt Priv_ley_PEM with RSA
+        user["private_key"] = cryptography.AES_decrypt(
+            user["private_key"], user["password"])
+        plain_text = cryptography.RSA_decrypt(cipher_text, user["private_key"])
+        print("plain text:", plain_text)
+    except:
+        print("decrypt RSA private key failed")
+
+    # change user infotmation
+    if request.method == "POST":
+        new_info = {
+            "email": request.form.get("email"),
+            "name": request.form.get("name"),
+            "phone": request.form.get("phone"),
+            "address": request.form.get("address"),
+            "passwd": request.form.get("password")
+        }
+
+        app.logger.info("----- CHANGE INFO --------")
+        app.logger.info("new info: %s", new_info)
+
+        changeInfo.change_info(new_info, user)
+
+    return render_template('home.html', form=form, user=user)
 
 
 @app.route("/logout")
