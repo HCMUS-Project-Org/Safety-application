@@ -35,11 +35,11 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = SECRET_KEY
 
 # connect to mongoDB
-# try:
-client = MongoClient(MONGO_URI, int(MONGO_PORT))
-db = client.myDatabase  # database name
-# except:
-#     app.logger.error("Can not connect MongoDB")
+try:
+    client = MongoClient(MONGO_URI, int(MONGO_PORT))
+    db = client.myDatabase  # database name
+except:
+    app.logger.error("Can not connect MongoDB")
 
 Bootstrap(app)
 
@@ -62,7 +62,7 @@ def login():
         if user is None:
             return render_template("login.html", form=form, error="Email does not exist.")
 
-        if authen.verify_password(passwd, user["password"]):
+        if authen.verify_password(passwd, user["passphase"]):
 
             user = json.dumps(user, default=str)
             session["user"] = user
@@ -79,25 +79,24 @@ def register():
 
     if request.method == "POST":
         passwd = request.form.get("password")
-        passphrase = authen.salt_hash256(passwd)
+        passphase = authen.salt_hash256(passwd)
 
         # check if email exists
         if (authen.check_email_exists(request.form.get("email"))):
             return render_template("register.html", form=form, error="Email exist.")
 
-        public_key, private_key, pri = cryptography.gen_user_RSA_key_pem(
-            passphrase)
+        public_key, private_key = cryptography.gen_user_RSA_key_pem(
+            passphase)
 
         user = {
             "email": form.email.data,
             "name": form.name.data,
             "phone": form.phone.data,
             "address": form.address.data,
-            "password": passphrase,
-            "pass": passwd,
+            "passphase": passphase,
+            "pass": passwd,  # temp
             "public_key": public_key,
             "private_key": private_key,
-            "private_key_dec": pri
         }
 
         db.users.insert_one(user)
@@ -108,8 +107,6 @@ def register():
 
 @ app.route('/home', methods=['GET', 'POST'])
 def home():
-    app.logger.info("----- HOME --------")
-
     # authorize user
     if not 'user' in session:
         return redirect(url_for('login'))
@@ -117,19 +114,18 @@ def home():
     user = json.loads(session["user"])
     form = ChangeInfoForm()
 
-    app.logger.info("-----------")
+    # # test
+    # cipher_text = cryptography.RSA_encrypt(
+    #     "hello sssd", user["public_key"])
 
-    cipher_text = cryptography.RSA_encrypt(
-        "hello sssd", user["public_key"])
-
-    try:
-        # decrypt Priv_ley_PEM with RSA
-        user["private_key"] = cryptography.AES_decrypt(
-            user["private_key"], user["password"])
-        plain_text = cryptography.RSA_decrypt(cipher_text, user["private_key"])
-        print("plain text:", plain_text)
-    except:
-        print("decrypt RSA private key failed")
+    # try:
+    #     # decrypt Priv_ley_PEM with RSA
+    #     user["private_key"] = cryptography.AES_decrypt(
+    #         user["private_key"], user["passphase"])
+    #     plain_text = cryptography.RSA_decrypt(cipher_text, user["private_key"])
+    #     print("plain text:", plain_text)
+    # except:
+    #     print("decrypt RSA private key failed")
 
     # change user infotmation
     if request.method == "POST":
@@ -138,7 +134,7 @@ def home():
             "name": request.form.get("name"),
             "phone": request.form.get("phone"),
             "address": request.form.get("address"),
-            "passwd": request.form.get("password")
+            "passphase": request.form.get("password")
         }
 
         app.logger.info("----- CHANGE INFO --------")

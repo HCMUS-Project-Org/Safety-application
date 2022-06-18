@@ -1,13 +1,15 @@
+* passphase = salt_hash(passwd)
+
 
 TASK 1:
 	salt = random(32 byte)
 	hash_pass = hash(passwd + salt)
 
-	storage: passwd = salt + hash_pass
+	storage: passphase = salt + hash_pass
 
 	get hash_pass and salt: 
-		salt = passwd[:32]  (because salt length is 32)
-		hash_pass = passwd[32:]
+		salt = passphase[:32]  (because salt length is 32)
+		hash_pass = passphase[32:]
 		
 	ref: 
 		- https://nitratine.net/blog/post/how-to-hash-passwords-in-python/
@@ -19,7 +21,7 @@ TASK 2:
 	gen RSA_PubKey_PEM and RSA_PriKey_PEM (RSA) (length 2048) 
 	
 	RSA_PriKey_PEM -> encode(AES)
-		- AES_PriKey(passphrase)
+		- AES_PriKey(passphase)
 		
 	storage: 
 		- RSA_PriKey_PEM.encode(AES_PubKey())
@@ -41,5 +43,12 @@ AUTHEN and AUTHOR
 ---------------------------------------
 
 TASK 3:	
+	- Create new passhase from new password
+	- Decode RSA_PriKey_PEM to get original RSA_PriKey_PEM
+	- Encode RSA_PriKey_PEM with new passhase
+
+	storage:
+		- new RSA_PriKey_PEM
+		- new passhase
 
 

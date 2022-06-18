@@ -31,10 +31,10 @@ def gen_RSA_key_pem():
     return pub_key_pem, priv_key_pem
 
 
-def gen_user_RSA_key_pem(passphrase):
+def gen_user_RSA_key_pem(passphase):
     pub_key_pem, priv_key_pem = gen_RSA_key_pem()
-    encrypted_priv_key = AES_encrypt(priv_key_pem, passphrase)
-    return pub_key_pem.encode(), encrypted_priv_key, priv_key_pem
+    encrypted_priv_key = AES_encrypt(priv_key_pem, passphase)
+    return pub_key_pem.encode(), encrypted_priv_key
 
 
 def RSA_encrypt(plain_text, pub_key_pem):
@@ -61,8 +61,14 @@ def RSA_decrypt(cipher_text, priv_key_pem):
     return decrypted
 
 
-def AES_encrypt(plain_text, passphrase):
-    private_key = hashlib.sha256(passphrase.encode("utf-8")).digest()
+def AES_encrypt(plain_text, passphase):
+    # print("--------------------")
+    # print("plain_text", plain_text)
+    # print("type:", type(plain_text))
+    if type(plain_text) == bytes:
+        plain_text = plain_text.decode()
+
+    private_key = hashlib.sha256(passphase.encode("utf-8")).digest()
     plain_text = pad(plain_text).encode("utf-8")
     iv = Random.new().read(AES.block_size)
     cipher = AES.new(private_key, AES.MODE_CBC, iv)
@@ -78,13 +84,20 @@ def AES_decrypt(cipher_text, passphrase):
     cipher_text = base64.b64decode(cipher_text)
     iv = cipher_text[:16]
     cipher = AES.new(private_key, AES.MODE_CBC, iv)
-    return unpad(cipher.decrypt(cipher_text[16:]))
+
+    u_pad = unpad(cipher.decrypt(cipher_text[16:]))
+    print("\n\n-------- unpad ------------")
+    print("cipher:", u_pad)
+    print("type:", type(u_pad))
+
+    return u_pad
 
 
 if __name__ == "__main__":
     # get RSA pair key PEM
     publickeyPEM, privatekeyPEM = gen_RSA_key_pem()
 
+    print("--------- publickeyPEM ---------")
     print(publickeyPEM)
     print(type(publickeyPEM))
 
