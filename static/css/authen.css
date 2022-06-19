@@ -11,7 +11,6 @@ body {
 	background-color: white;
 	padding: 72px 32px;
 	margin-top: 72px;
-	border-radius: 12px;
 	width: 500px;
 	display: flex;
 	flex-direction: column;
@@ -49,7 +48,8 @@ button {
 	color: white;
 	font-weight: bolder;
 	border-radius: 30px;
-	width: 180px;
+	width: 100% !important;
+	min-width: 120px;
 	padding: 0px;
 	margin: 30px auto;
 	border: none;
@@ -81,4 +81,8 @@ a {
 a:hover {
 	color: black;
 	text-decoration: underline;
+}
+
+.rounded {
+	border-radius: 15px !important;
 }

@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 <!-- ------------------------ -->
-{% block title %}Login{%endblock%}
+{% block title %}Home{%endblock%}
 
 <!-- ------------------------ -->
 {% block style %}
@@ -10,29 +10,44 @@
 {% endblock %}
 
 <!-- ------------------------ -->
+{% block header %}
+<header class="w-100 bg-white p-3">
+	<h2 class="group-name">Small EST</h2>
+</header>
+{% endblock %}
+
+<!-- ------------------------ -->
 {% block body %}
-<div class="container-lg border border-dark bg-white">
-	<div class="d-flex flex-column align-items-center justify-content-center">
-		<h1 class="fw-bolder">Home</h1>
-		<div class="d-flex align-items-center justify-content-center gap-3">
+<div class="row py-4 mx-4">
+	<div
+		class="col-lg-4 col-12 d-flex flex-column align-items-center justify-content-center bg-white mt-3 rounded"
+	>
+		<h1 class="fw-bolder my-4 text-uppercase">Home</h1>
+		<div class="d-flex flex-column align-items-center justify-content-center">
 			<div
 				class="d-flex flex-column align-items-center justify-content-center"
 			>
 				<img src="../static/img/avatar.jpg" alt="logo" class="img-fluid" />
-				<div class="text-center">{{user.name}}</div>
+				<div class="text-center">
+					<h4 class="m-0 fw-normal">Welcome back</h4>
+
+					<h2 class="">{{user.name}}</h2>
+				</div>
 			</div>
 
 			<!-- Button trigger modal -->
-			<button
-				type="button"
-				class="btn-change-info"
-				data-bs-toggle="modal"
-				data-bs-target="#exampleModal"
-			>
-				Change information
-			</button>
+			<div class="d-flex gap-2">
+				<button
+					type="button"
+					class="btn-change-info"
+					data-bs-toggle="modal"
+					data-bs-target="#exampleModal"
+				>
+					Change information
+				</button>
 
-			<button class="btn-logout" onclick="logout()">Logout</button>
+				<button class="btn-logout" onclick="logout()">Logout</button>
+			</div>
 			<!-- Modal -->
 			<div
 				class="modal fade"
@@ -82,7 +97,246 @@
 			</div>
 		</div>
 	</div>
+	<div class="col mt-4 mt-lg-3 px-0 px-lg-3">
+		<div class="bg-white rounded p-4">
+			<h2 class="p-3 pb-0 fw-bold text-danger">Send file</h2>
+
+			<form
+				action="/upload"
+				method="POST"
+				enctype="multipart/form-data"
+				class="form-upload w-100"
+			>
+				{{upload_form.hidden_tag()}}
+				<div
+					class="d-flex flex-column align-items-center justify-content-center"
+				>
+					<div class="row w-100 align-items-center">
+						<div class="col-4 m-0">{{upload_form.file}}</div>
+						<div class="col-5 m-0">{{upload_form.email}}</div>
+						<div class="col-3 text-center">{{upload_form.submit}}</div>
+					</div>
+				</div>
+			</form>
+		</div>
+
+		<div class="bg-white mt-2 rounded p-4">
+			<h2 class="p-3 pb-0 fw-bold text-danger">Decrypt file</h2>
+
+			<form action="/decrypt" method="POST" class="form-upload w-100">
+				<div
+					class="d-flex flex-column align-items-center justify-content-center"
+				>
+					<div class="row w-100 align-items-center">
+						<div class="col-9 m-0">
+							<select class="form-select form-select-lg mb-3 rounded">
+								<option selected>Open this select menu</option>
+								<option value="1">One</option>
+								<option value="2">Two</option>
+								<option value="3">Three</option>
+							</select>
+						</div>
+						<div class="col-3 text-center">
+							<input type="submit" name="submit" value="DECRYPT" />
+						</div>
+					</div>
+				</div>
+			</form>
+		</div>
+
+		<div class="row gap-2 m-0 mt-2">
+			<div class="col bg-white rounded p-4">
+				<h2 class="p-3 pb-0 fw-bold text-danger">Sign on file</h2>
+				<form
+					action="/upload"
+					method="POST"
+					enctype="multipart/form-data"
+					class="form-upload ps-3"
+				>
+					{{upload_form.hidden_tag()}}
+					<div class="w-100 d-flex flex-column justify-content-center">
+						<div>{{upload_form.file}}</div>
+						<div>{{upload_form.submit(value="SIGN ON")}}</div>
+					</div>
+				</form>
+			</div>
+			<div class="col-7 bg-white rounded p-4">
+				<h2 class="p-3 pb-0 fw-bold text-danger">Verify signature</h2>
+				<form
+					action="/verify"
+					method="POST"
+					enctype="multipart/form-data"
+					class="form-upload w-100"
+				>
+					{{upload_form.hidden_tag()}}
+					<div
+						class="w-100 d-flex align-items-center justify-content-between gap-4"
+					>
+						<div>
+							<div>
+								<span>File</span>
+								{{upload_form.file}}
+							</div>
+							<div class="mt-2">
+								<span>Signature file</span>
+								{{upload_form.sign_file}}
+							</div>
+						</div>
+						{{upload_form.submit(value="VERIFY")}}
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
 </div>
+{% endblock %}
+
+<!-- ------------------------ -->
+{% block footer %}
+<footer class="footer w-100 mt-4 bg-white p-4">
+	<div class="row align-items-center justify-content-around">
+		<div
+			class="col m-0 d-flex flex-column align-items-start justify-content-center"
+		>
+			<h2 class="m-0 px-4">ABOUT US</h2>
+			<div class="text-start m-0 px-4 pb-4">
+				<div class="text-start m-0">
+					<span class="fw-bold">Project: </span>
+					<span>01</span>
+				</div>
+				<div class="text-start m-0">
+					<span class="fw-bold">Class: </span>
+					<span>19MMT2</span>
+				</div>
+				<div class="text-start m-0">
+					<span class="fw-bold">Subject: </span>
+					<span>Computer Security</span>
+				</div>
+				<div class="text-start m-0">
+					<span class="fw-bold">University: </span>
+					<span>HCMUS</span>
+				</div>
+			</div>
+		</div>
+		<div class="col m-0">
+			<div class="w-100 h-100 d-flex flex-xl-row flex-column gap-4">
+				<div class="card rounded">
+					<div class="d-flex">
+						<div class="card-img-container rounded">
+							<img
+								src="./static/img/member/avt_ToGiaHao.png"
+								class="card-img w-100 h-100"
+								alt="19127392"
+							/>
+						</div>
+						<div
+							class="card-body d-flex align-items-center justify-content-between gap-4"
+						>
+							<div>
+								<h4 class="card-title m-0 text-left">19127392</h4>
+								<h5 class="card-title text-left fw-normal">
+									Tô Gia Hảo
+								</h5>
+							</div>
+							<a href="https://github.com/To-Gia-Hao" target="_blank">
+								<i class="fab fa-github fa-3x icon"></i>
+							</a>
+						</div>
+					</div>
+				</div>
+
+				<div class="card rounded">
+					<div class="d-flex">
+						<div class="card-img-container rounded">
+							<img
+								src="./static/img/member/avt_NguyenThanhQuan.jpg"
+								class="card-img w-100 h-100"
+								alt="19127525"
+							/>
+						</div>
+						<div
+							class="card-body d-flex align-items-center justify-content-between gap-4"
+						>
+							<div>
+								<h4 class="card-title m-0 text-left">19127525</h4>
+								<h5 class="card-title text-left fw-normal">
+									Nguyễn Thanh Quân
+								</h5>
+							</div>
+							<a href="https://github.com/QuanBlue" target="_blank">
+								<i class="fab fa-github fa-3x icon"></i>
+							</a>
+						</div>
+					</div>
+				</div>
+				<div class="card rounded">
+					<div class="d-flex">
+						<div class="card-img-container rounded">
+							<img
+								src="./static/img/member/avt_LamChiVan.jpg"
+								class="card-img w-100 h-100"
+								alt="19127625"
+							/>
+						</div>
+						<div
+							class="card-body d-flex align-items-center justify-content-between gap-4"
+						>
+							<div>
+								<h4 class="card-title m-0 text-left">19127625</h4>
+								<h5 class="card-title text-left fw-normal">
+									Lâm Chí Văn
+								</h5>
+							</div>
+							<a href="https://github.com/chivanz128" target="_blank">
+								<i class="fab fa-github fa-3x icon"></i>
+							</a>
+						</div>
+					</div>
+				</div>
+
+				<!-- <div class="card rounded">
+					<div class="card-img-container rounded">
+						<img
+							src="../static/img/member/avt_NguyenThanhQuan.jpg"
+							class="card-img w-100 h-100"
+							alt="19127525"
+						/>
+					</div>
+					<div class="card-body d-flex align-items-center gap-4">
+						<div>
+							<h4 class="card-title m-0 text-left">19127525</h4>
+							<h5 class="card-title text-left fw-normal">
+								Nguyễn Thanh Quân
+							</h5>
+						</div>
+						<a href="https://github.com/QuanBlue" target="_blank">
+							<i class="fab fa-github fa-3x icon"></i>
+						</a>
+					</div>
+				</div>
+
+				<div class="card rounded">
+					<div class="card-img-container rounded">
+						<img
+							src="../static/img/member/avt_LamChiVan.jpg"
+							class="card-img w-100 h-100"
+							alt="19127625"
+						/>
+					</div>
+					<div class="card-body d-flex align-items-center gap-4">
+						<div>
+							<h4 class="card-title m-0 text-left">19127625</h4>
+							<h5 class="card-title text-left fw-normal">Lâm Chí Văn</h5>
+						</div>
+						<a href="https://github.com/chivanz128" target="_blank">
+							<i class="fab fa-github fa-3x icon"></i>
+						</a>
+					</div>
+				</div> -->
+			</div>
+		</div>
+	</div>
+</footer>
 {% endblock %}
 
 <!-- ------------------------ -->

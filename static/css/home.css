@@ -1,6 +1,6 @@
 img {
-	width: 75px;
-	height: 75px;
+	width: 200px;
+	height: 200px;
 	border-radius: 50%;
 }
 
@@ -8,12 +8,17 @@ h1 {
 	font-size: 52px;
 }
 
+.group-name {
+	color: #bd59d4;
+	font-weight: bold;
+}
+
 .btn-change-info {
 	background: #bd59d4;
 	color: white;
 	font-weight: bolder;
 	border-radius: 8px;
-	width: 220px;
+	min-width: 175px;
 	height: 50px;
 	border-width: 0px;
 	padding: 0px;
@@ -27,7 +32,7 @@ h1 {
 }
 
 .btn-logout {
-	width: 80px;
+	min-width: 80px;
 	height: 50px;
 	background: red;
 	color: white;
@@ -58,4 +63,61 @@ button.btn-cancel {
 
 button.btn-cancel:hover {
 	background: gray;
+}
+
+.form-upload input[type="file"],
+.form-upload input[type="email"] {
+	margin: 0px;
+}
+
+.form-select {
+	padding: 20px;
+	height: 65px;
+	margin: 0px !important;
+	box-shadow: rgba(0, 0, 0, 0.1) 0px 10px 50px;
+	border: none;
+}
+
+.form-select:hover {
+	cursor: pointer;
+}
+
+.form-select:focus {
+	outline: rgb(189, 89, 212) solid 2px;
+	box-shadow: rgb(189, 89, 212) 0px 10px 50px;
+}
+
+.card {
+	/* width: 300px !important; */
+	background: rgb(192, 203, 211);
+}
+
+.card-img-container {
+	width: 100px;
+	height: 100px;
+	margin: 0px;
+	overflow: hidden;
+}
+
+.card-body {
+	margin: 0px;
+	min-width: 320px;
+}
+
+.card-img {
+	transition: 1s ease all;
+}
+
+.card-img:hover {
+	transform: scale(1.1);
+}
+
+.icon {
+	border-radius: 50% !important;
+	transition: 0.3s all;
+}
+
+.icon:hover {
+	color: rgb(189, 89, 212);
+	box-shadow: rgb(189, 89, 212) 0px 10px 50px;
 }

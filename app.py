@@ -3,6 +3,7 @@ import authen
 import cryptography
 from form.authenForm import LoginForm, RegisterForm
 from form.changeInfoForm import ChangeInfoForm
+from form.uploadFileForm import UploadFileForm
 import changeInfo
 
 try:
@@ -33,7 +34,6 @@ app = Flask(__name__)
 
 # Flask-WTF requires an encryption key - the string can be anything
 app.config['SECRET_KEY'] = SECRET_KEY
-
 # connect to mongoDB
 try:
     client = MongoClient(MONGO_URI, int(MONGO_PORT))
@@ -113,6 +113,7 @@ def home():
 
     user = json.loads(session["user"])
     form = ChangeInfoForm()
+    upload_form = UploadFileForm()
 
     # # test
     # cipher_text = cryptography.RSA_encrypt(
@@ -142,7 +143,12 @@ def home():
 
         changeInfo.change_info(new_info, user)
 
-    return render_template('home.html', form=form, user=user)
+    return render_template('home.html', form=form, upload_form=upload_form, user=user)
+
+
+@app.route('/upload')
+def upload_file():
+    pass
 
 
 @app.route("/logout")
