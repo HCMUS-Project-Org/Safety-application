@@ -89,6 +89,8 @@ def register():
             passphase)
 
         user = {
+            "avatar": 'https://avatars.dicebear.com/api/human/{}.svg'.format(
+                form.name.data),
             "email": form.email.data,
             "name": form.name.data,
             "phone": form.phone.data,

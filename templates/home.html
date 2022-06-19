@@ -27,7 +27,7 @@
 			<div
 				class="d-flex flex-column align-items-center justify-content-center"
 			>
-				<img src="../static/img/avatar.jpg" alt="logo" class="img-fluid" />
+				<img src="{{user['avatar']}} " alt="logo" class="img-fluid" />
 				<div class="text-center">
 					<h4 class="m-0 fw-normal">Welcome back</h4>
 
@@ -65,10 +65,12 @@
 								</h2>
 								<button
 									type="button"
-									class="btn-close"
+									class="close-btn"
 									data-bs-dismiss="modal"
 									aria-label="Close"
-								></button>
+								>
+									X
+								</button>
 							</div>
 							<div class="modal-body p-3 px-4">
 								{{form.hidden_tag()}} {{form.email(value=user.email)}}

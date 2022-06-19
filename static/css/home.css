@@ -65,6 +65,17 @@ button.btn-cancel:hover {
 	background: gray;
 }
 
+.close-btn {
+	width: 5px !important;
+	color: red;
+	background: transparent;
+	box-shadow: none;
+}
+
+.close-btn:hover {
+	background: transparent;
+}
+
 .form-upload input[type="file"],
 .form-upload input[type="email"] {
 	margin: 0px;
