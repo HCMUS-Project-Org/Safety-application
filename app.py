@@ -114,6 +114,7 @@ def home():
         return redirect(url_for('login'))
 
     user = json.loads(session["user"])
+
     form = ChangeInfoForm()
     upload_form = UploadFileForm()
 
@@ -130,7 +131,16 @@ def home():
     # except:
     #     print("decrypt RSA private key failed")
 
-    # change user infotmation
+    return render_template('home.html', form=form, upload_form=upload_form, user=user)
+
+
+@app.route("/change-info", methods=['GET', 'POST'])
+def change_info():
+    if not 'user' in session:
+        return redirect(url_for('login'))
+
+    user = json.loads(session["user"])
+
     if request.method == "POST":
         new_info = {
             "email": request.form.get("email"),
@@ -145,7 +155,7 @@ def home():
 
         changeInfo.change_info(new_info, user)
 
-    return render_template('home.html', form=form, upload_form=upload_form, user=user)
+    return redirect(url_for('home'))
 
 
 @app.route('/upload')
