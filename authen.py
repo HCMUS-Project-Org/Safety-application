@@ -3,6 +3,7 @@ from base64 import b64encode
 from os import getenv, urandom
 from dotenv import load_dotenv
 from app import db
+import cryptography
 
 load_dotenv()  # take environment variables from .env.
 
@@ -27,8 +28,7 @@ def salt_hash256(passwd):
     Return: passwd
     """
 
-    hash_password = hashlib.sha256(
-        (passwd + salt).encode("utf-8")).hexdigest()
+    hash_password = cryptography.sha256(passwd + salt)
 
     return salt + hash_password
 

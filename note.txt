@@ -1,5 +1,6 @@
 * passphase = salt_hash(passwd)
 
+can get full path of upload file so just save .sign in UPLOADER_FOLDER
 
 TASK 1:
 	salt = random(32 byte)
@@ -50,5 +51,20 @@ TASK 3:
 	storage:
 		- new RSA_PriKey_PEM
 		- new passhase
+		
+		
+Task 6 + 7: (Digital signature)
+	- Digital signature: ensure data is Integrity and Authenticity
+	- Read file as binary
+	- sign:
+		+ hash_file = hash256(file)
+		+ signature = hash_file^d mod n (from private key)
+	- verify:
+		+ hash_file = hash256(file)
+		+ hash_from_sign = signature^e mod n (from public key)
+		-> hash_file == hash_from_sign ? true : false
+			
+	
+	ref: https://cryptobook.nakov.com/digital-signatures/rsa-sign-verify-examples
 
 

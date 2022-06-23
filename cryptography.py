@@ -24,6 +24,13 @@ def byte_string_to_byte(byte_string):
     return bytes(byte_string.strip("b'"), "ascii")
 
 
+def sha256(plain_text):
+    if type(plain_text) == str:
+        plain_text = plain_text.encode("utf-8")
+
+    return hashlib.sha256(plain_text).hexdigest()
+
+
 def gen_RSA_key_pem():
     key = RSA.generate(2048)
     pub_key_pem = key.publickey().exportKey().decode()
@@ -40,6 +47,9 @@ def gen_user_RSA_key_pem(passphase):
 def RSA_encrypt(plain_text, pub_key_pem):
     if type(pub_key_pem) == str:
         pub_key_pem = byte_string_to_string(pub_key_pem)
+
+    print("plain text:", plain_text)
+    print("type:", type(plain_text))
 
     public_key = RSA.importKey(pub_key_pem)
     public_key = RSA.construct((public_key.n, public_key.e))
@@ -86,9 +96,6 @@ def AES_decrypt(cipher_text, passphrase):
     cipher = AES.new(private_key, AES.MODE_CBC, iv)
 
     u_pad = unpad(cipher.decrypt(cipher_text[16:]))
-    print("\n\n-------- unpad ------------")
-    print("cipher:", u_pad)
-    print("type:", type(u_pad))
 
     return u_pad
 
@@ -107,7 +114,6 @@ if __name__ == "__main__":
     # decrypt Priv_ley_PEM with AES
     decrypted_priv_key = AES_decrypt(encrypted_priv_key, "my password")
 
-    print("decrypted_priv_key: ", decrypted_priv_key)
     mess = "encrypt RSA private key"
 
     # encrypt Priv_ley_PEM with RSA
