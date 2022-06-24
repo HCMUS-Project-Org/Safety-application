@@ -63,22 +63,36 @@
 				>
 					<div class="modal-dialog modal-dialog-centered">
 						<div class="modal-content">
-							<div class="modal-header">
-								<h2 class="modal-title" id="exampleModalLabel">
-									Change {{user.name}}'s information
-								</h2>
+							<div
+								class="modal-header d-flex flex-column position-relative"
+							>
 								<button
 									type="button"
-									class="close-btn"
+									class="close-btn m-0"
 									data-bs-dismiss="modal"
 									aria-label="Close"
+									style="position: absolute; top: 20px; right: -30px"
 								>
 									X
 								</button>
+								<div class="d-flex align-items-center">
+									<div class="m-0 h-100 gap-4 row">
+										<img
+											src="{{user.avatar}}"
+											class="rounded-circle"
+											style="width: 150px; height: 150px"
+										/>
+									</div>
+									<h2 class="modal-title" id="exampleModalLabel">
+										Change
+										<span style="color: #bd59d4">{{user.name}}</span>
+										's information
+									</h2>
+								</div>
 							</div>
 							<div class="modal-body p-3 px-4">
-								{{form.hidden_tag()}} {{form.email(value=user.email)}}
-								{{form.name(value=user.name)}}
+								{{form.hidden_tag()}} {{form.name(value=user.name)}}
+								{{form.email(value=user.email)}}
 								{{form.phone(value=user.phone)}}
 								{{form.address(value=user.address)}}
 								<div class="d-flex align-items-center gap-4">
@@ -225,6 +239,51 @@
 		</div>
 	</div>
 </div>
+
+<!-- <form>
+	<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content">
+			<div class="modal-header d-flex flex-column">
+				<div class="d-flex align-items-center">
+					<div class="m-0 h-100 gap-4 row">
+						<img
+							src="{{user.avatar}}"
+							class="rounded-circle"
+							style="width: 150px; height: 150px"
+						/>
+					</div>
+					<h2 class="modal-title" id="exampleModalLabel">
+						Change {{user.name}}'s information
+					</h2>
+				</div>
+				<button
+					type="button"
+					class="close-btn visually-hidden"
+					data-bs-dismiss="modal"
+					aria-label="Close"
+				>
+					X
+				</button>
+			</div>
+			<div class="modal-body p-3 px-4">
+				{{form.hidden_tag()}} {{form.name(value=user.name)}}
+				{{form.email(value=user.email)}} {{form.phone(value=user.phone)}}
+				{{form.address(value=user.address)}}
+				<div class="d-flex align-items-center gap-4">
+					{{form.password}} {{form.show_password}}
+				</div>
+			</div>
+			<div class="modal-footer">
+				<div class="d-flex gap-4">
+					<button type="button" class="btn-cancel" data-bs-dismiss="modal">
+						Cancel
+					</button>
+					{{form.submit}}
+				</div>
+			</div>
+		</div>
+	</div>
+</form> -->
 
 {% endblock %}
 
