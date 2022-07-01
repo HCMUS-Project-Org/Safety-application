@@ -141,19 +141,33 @@
 		</div>
 
 		<div class="bg-white mt-2 rounded p-4">
-			<h2 class="p-3 pb-0 fw-bold text-danger">Decrypt file</h2>
+			<h2 class="p-3 pb-0 fw-bold text-danger">Decrypt file {{files[0]}}</h2>
 
 			<form action="/decrypt" method="POST" class="form-upload w-100">
 				<div
 					class="d-flex flex-column align-items-center justify-content-center"
 				>
 					<div class="row w-100 align-items-center">
-						<div class="col-9 m-0">
-							<select class="form-select form-select-lg mb-3 rounded">
-								<option selected>Open this select menu</option>
-								<option value="1">One</option>
-								<option value="2">Two</option>
-								<option value="3">Three</option>
+						<div class="col-9 m-0" id='selected-encrypt-file'>
+						
+								<script>
+									selectedName = document.getElementById(
+										"selected-encrypt-file",
+									);
+                  let files = "{{files}}".split("&#39;").join("'").replace(/\[|\]|'|"/g,'').split(',');
+                  
+                  console.log("files",files, "type:", typeof files);
+
+									let html = `	<select class="form-select form-select-lg mb-3 rounded">
+                    <option selected>Open this select menu</option>
+                    `;
+									for (let i = 0; i < files.length; i++) {
+										html += `<option value=${files[i]}">${files[i]}</option>`;
+									}
+                  html += `</select>`
+                  console.log("html", html)
+									selectedName.innerHTML = html;
+								</script>
 							</select>
 						</div>
 						<div class="col-3 text-center">
@@ -240,50 +254,6 @@
 	</div>
 </div>
 
-<!-- <form>
-	<div class="modal-dialog modal-dialog-centered">
-		<div class="modal-content">
-			<div class="modal-header d-flex flex-column">
-				<div class="d-flex align-items-center">
-					<div class="m-0 h-100 gap-4 row">
-						<img
-							src="{{user.avatar}}"
-							class="rounded-circle"
-							style="width: 150px; height: 150px"
-						/>
-					</div>
-					<h2 class="modal-title" id="exampleModalLabel">
-						Change {{user.name}}'s information
-					</h2>
-				</div>
-				<button
-					type="button"
-					class="close-btn visually-hidden"
-					data-bs-dismiss="modal"
-					aria-label="Close"
-				>
-					X
-				</button>
-			</div>
-			<div class="modal-body p-3 px-4">
-				{{form.hidden_tag()}} {{form.name(value=user.name)}}
-				{{form.email(value=user.email)}} {{form.phone(value=user.phone)}}
-				{{form.address(value=user.address)}}
-				<div class="d-flex align-items-center gap-4">
-					{{form.password}} {{form.show_password}}
-				</div>
-			</div>
-			<div class="modal-footer">
-				<div class="d-flex gap-4">
-					<button type="button" class="btn-cancel" data-bs-dismiss="modal">
-						Cancel
-					</button>
-					{{form.submit}}
-				</div>
-			</div>
-		</div>
-	</div>
-</form> -->
 
 {% endblock %}
 

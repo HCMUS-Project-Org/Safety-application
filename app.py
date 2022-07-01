@@ -46,6 +46,7 @@ APP_PORT = os.getenv("APP_PORT")
 basedir = os.path.abspath(os.path.dirname(__file__))
 app = Flask(__name__)
 
+
 # Flask-WTF requires an encryption key - the string can be anything
 app.config['SECRET_KEY'] = SECRET_KEY
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -154,6 +155,12 @@ def home():
     form = ChangeInfoForm()
     upload_form = UploadFileForm()
 
+    sharedFiles = db.shared_file.find({"email": user['email']})
+    files = []
+    for file in sharedFiles:
+        files.append(file['name'])
+
+    print("files:", files)
     # # test
     # cipher_text = cryptography.RSA_encrypt(
     #     "hello sssd", user["public_key"])
@@ -167,7 +174,7 @@ def home():
     # except:
     #     print("decrypt RSA private key failed")
 
-    return render_template('home.html', form=form, upload_form=upload_form, user=user)
+    return render_template('home.html', form=form, upload_form=upload_form, user=user, files=files)
 
 
 @app.route("/change-info", methods=['GET', 'POST'])
@@ -200,14 +207,6 @@ def upload_file():
 @app.route('/decrypt', methods=['GET', 'POST'])
 def decrypt_file():
     user = authorize()
-    print("user", user, " - type:", type(user))
-    print("user.email", user['email'])
-    sharedFile = db.shared_file.find()
-    print("sharedFile:", sharedFile)
-
-    sharedFile = db.shared_file.find({"email": user['email']})
-
-    print("sharedFile:", sharedFile)
     pass
 
 
