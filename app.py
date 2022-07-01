@@ -1,14 +1,15 @@
 import os
-import authen
-import cryptography
-from form.authenForm import LoginForm, RegisterForm
-from form.changeInfoForm import ChangeInfoForm
-from form.uploadFileForm import UploadFileForm
-import changeInfo
-from Crypto.PublicKey import RSA
-from werkzeug.utils import secure_filename
+
 
 try:
+    from form.authenForm import LoginForm, RegisterForm
+    from form.changeInfoForm import ChangeInfoForm
+    from form.uploadFileForm import UploadFileForm
+    from Crypto.PublicKey import RSA
+    from werkzeug.utils import secure_filename
+    import authen
+    import cryptography
+    import changeInfo
     from dotenv import load_dotenv
     from flask import Flask, redirect, render_template, request, url_for, session
     import json
@@ -18,6 +19,14 @@ try:
 except:
     os.system("pip install -r requirements.txt")
     # import again
+    from form.authenForm import LoginForm, RegisterForm
+    from form.changeInfoForm import ChangeInfoForm
+    from form.uploadFileForm import UploadFileForm
+    from Crypto.PublicKey import RSA
+    from werkzeug.utils import secure_filename
+    import authen
+    import cryptography
+    import changeInfo
     from dotenv import load_dotenv
     from flask import Flask, redirect, render_template, request, url_for, session
     import json
@@ -113,6 +122,8 @@ def login():
         email = request.form.get("email")
         passwd = request.form.get("password")
 
+        app.logger.info("Login..... email: %s - pass: %s", email, passwd)
+
         # check if email exists
         user = db.users.find_one({"email": email})
 
@@ -188,6 +199,15 @@ def upload_file():
 
 @app.route('/decrypt', methods=['GET', 'POST'])
 def decrypt_file():
+    user = authorize()
+    print("user", user, " - type:", type(user))
+    print("user.email", user['email'])
+    sharedFile = db.shared_file.find()
+    print("sharedFile:", sharedFile)
+
+    sharedFile = db.shared_file.find({"email": user['email']})
+
+    print("sharedFile:", sharedFile)
     pass
 
 
