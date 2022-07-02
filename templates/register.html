@@ -15,7 +15,9 @@
 	<form method="POST" action="" class="d-flex flex-column">
 		{{form.hidden_tag()}} {{form.email}} {{form.name}} {{form.phone}}
 		{{form.address}}
-		<div class="d-flex align-items-center justify-content-center gap-4">
+		<div
+			class="d-flex align-items-center justify-content-between gap-4 w-full m-0"
+		>
 			{{form.password}} {{form.show_password}}
 		</div>
 		<div class="error">{{error}}</div>
