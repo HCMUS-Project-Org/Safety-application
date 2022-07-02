@@ -41,6 +41,7 @@ def gen_RSA_key_pem():
 def gen_user_RSA_key_pem(passphase):
     pub_key_pem, priv_key_pem = gen_RSA_key_pem()
     encrypted_priv_key = AES_encrypt(priv_key_pem, passphase)
+
     return pub_key_pem.encode(), encrypted_priv_key
 
 
@@ -72,9 +73,6 @@ def RSA_decrypt(cipher_text, priv_key_pem):
 
 
 def AES_encrypt(plain_text, passphase):
-    # print("--------------------")
-    # print("plain_text", plain_text)
-    # print("type:", type(plain_text))
     if type(plain_text) == bytes:
         plain_text = plain_text.decode()
 

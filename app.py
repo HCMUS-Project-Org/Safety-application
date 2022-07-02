@@ -255,31 +255,28 @@ def verify_signed_file():
     filename = secure_filename(file.filename)
     sign_filename = secure_filename(sign_file.filename)
 
-    try:
-        signature = int(sign_file.read().decode())
+    signature = int(sign_file.read().decode())
 
-        hashed_file = int(cryptography.sha256(file.read()), 16)
+    hashed_file = int(cryptography.sha256(file.read()), 16)
 
-        users = db.users.find()
-        for user in users:
-            public_key = RSA.importKey(user["public_key"])
+    users = db.users.find()
+    for user in users:
+        public_key = RSA.importKey(user["public_key"])
 
-            hashFromSignature = pow(signature,
-                                    public_key.e, public_key.n)
-            if hashFromSignature == hashed_file:
-                return redirect(url_for('home', status="success", content="File is verified."))
-            else:
-                raise Exception("Verify failed.")
-    except:
-        if filename == "":
-            return redirect(url_for('home', status="fail", content="No file uploaded!"))
+        hashFromSignature = pow(signature,
+                                public_key.e, public_key.n)
+        if hashFromSignature == hashed_file:
+            return redirect(url_for('home', status="success", content="File is verified."))
 
-        elif sign_filename == "":
-            return redirect(url_for('home', status="fail", content="No file Signature uploaded!"))
+    if filename == "":
+        return redirect(url_for('home', status="fail", content="No file uploaded!"))
 
-        elif sign_filename.split(".")[-1] != "sig":
-            return redirect(url_for('home', status="fail", content="Wrong file Signature format!"))
-        return redirect(url_for('home', status="fail", content="Verify failed!"))
+    elif sign_filename == "":
+        return redirect(url_for('home', status="fail", content="No file Signature uploaded!"))
+
+    elif sign_filename.split(".")[-1] != "sig":
+        return redirect(url_for('home', status="fail", content="Wrong file Signature format!"))
+    return redirect(url_for('home', status="fail", content="Verify failed!"))
 
 
 if __name__ == '__main__':
