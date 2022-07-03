@@ -1,5 +1,7 @@
 import os
 
+from jinja2 import select_autoescape
+
 
 import installLib
 from form.authenForm import LoginForm, RegisterForm
@@ -20,6 +22,7 @@ from Crypto.PublicKey import RSA
 load_dotenv()  # take environment variables from .env.
 
 UPLOAD_FOLDER = "uploads"
+DOWNLOAD_FOLDER = "download"
 SALT_LENGTH = int(os.getenv("SALT_LENGTH"))
 SECRET_KEY = os.getenv("SECRET_KEY")
 MONGO_URI = os.getenv("MONGO_URI")
@@ -39,6 +42,9 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 def create_uploads_folder():
     os.path.exists(UPLOAD_FOLDER) or os.mkdir(UPLOAD_FOLDER)
+
+def create_download_folder():
+    os.path.exists(DOWNLOAD_FOLDER) or os.mkdir(DOWNLOAD_FOLDER)
 
 
 # connect to mongoDB
@@ -143,20 +149,6 @@ def home():
     for file in sharedFiles:
         files.append(file['name'])
 
-    print("files:", files)
-    # # test
-    # cipher_text = cryptography.RSA_encrypt(
-    #     "hello sssd", user["public_key"])
-
-    # try:
-    #     # decrypt Priv_ley_PEM with RSA
-    #     user["private_key"] = cryptography.AES_decrypt(
-    #         user["private_key"], user["passphase"])
-    #     plain_text = cryptography.RSA_decrypt(cipher_text, user["private_key"])
-    #     print("plain text:", plain_text)
-    # except:
-    #     print("decrypt RSA private key failed")
-
     return render_template('home.html', form=form, upload_form=upload_form, user=user, files=files)
 
 
@@ -192,60 +184,52 @@ def upload_file():
     if receiver is None:
         return redirect(url_for('home', status="fail", content="This user does not exist!"))
 
+    #read content file
     filename = secure_filename(uploaded_file.filename)
     content = uploaded_file.read()
 
-    print("--------------------")
-    print("input email:", email)
-    print("Receiver email:", receiver["email"])
-    print("filename:", filename)
-    print("content:", content)
+    if len(content) >= 15728640:     #15mb
+        return redirect(url_for('home', status="fail", content="File too large (>15MB)"))
+    
+    #gen Ksession and encrypted it with RSA
+    Ksession, en_ksession = cryptography.gen_session_key(receiver["public_key"])
 
-    cipher_text = cryptography.AES_encrypt(content, "mypassword")
-
-    print("-------")
-    print("cipher text:", cipher_text)
-    #content16 = [bytes(content[i:i+32],"utf-8") for i in range(0,len(content),32)]
-    # app.logger.debug(print(content16))
-    # app.logger.debug(print("-------------------------------"))
-    #cipher_text16 = []
-    # for i in range(len(content16)):
-    #cipher_text16.append(cryptography.AES_encrypt(content16[i], "mypassword"))
-    #cipher_text = b''.join(cipher_text16)
-    # app.logger.debug(print(cipher_text16))
-    # plain_text=[]
-    # for i in range(len(cipher_text16)):
-    #plain_text.append(cryptography.AES_decrypt(cipher_text16[i], "mypassword"))
-    plain_text = cryptography.AES_decrypt(
-        cipher_text, "mypassword")
-
-    print("\n\nplain text:", plain_text)
+    cipher_text = cryptography.AES_encrypt(content, Ksession)
+        
+    encrypt = b''.join([en_ksession,b'[+++++]',cipher_text])
+    app.logger.debug(print(encrypt,"====================="))
 
     new_file = {
         "name": filename,
         "email": email,
-        "content": content
+        "content": encrypt
     }
-
-    try:
-        pass
-        # db.shared_file.insert_one(new_file)
-    except:
-        pass
+    db.shared_file.insert_one(new_file)
 
     return redirect(url_for('home', status="success", content="File has been uploaded"))
 
 
 @app.route('/decrypt', methods=['GET', 'POST'])
 def decrypt_file():
-    user = authorize()
+    create_download_folder()
+
+    selected_file = []
+
+    file = db.shared_file.find_one({"name": selected_file})
+
+    # e = encrypt.split(b'[+++++]')
+    # app.logger.debug(print(e[0],"|||||||||||||||||||||||||||"))
+    # app.logger.debug(print(e[1],"---------------------------"))
+    #plain_text = cryptography.AES_decrypt(cipher_text, Ksession)
+
+
     return redirect(url_for('home', status="success", content="File has been decrypted"))
 
 
 @app.route('/sign-on', methods=['GET', 'POST'])
 def sign_on_file():
     create_uploads_folder()
-
+    
     user = authorize()
 
     try:
