@@ -43,7 +43,6 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 def create_uploads_folder():
     os.path.exists(UPLOAD_FOLDER) or os.mkdir(UPLOAD_FOLDER)
 
-
 def create_download_folder():
     os.path.exists(DOWNLOAD_FOLDER) or os.mkdir(DOWNLOAD_FOLDER)
 
@@ -177,8 +176,6 @@ def change_info():
 
 @app.route('/upload', methods=['GET', 'POST'])
 def upload_file():
-    user = authorize()
-
     # check if email exist
     email = request.form.get("email")
     receiver = db.users.find_one({"email": email})
@@ -187,21 +184,20 @@ def upload_file():
     if receiver is None:
         return redirect(url_for('home', status="fail", content="This user does not exist!"))
 
-    # read content file
+    #read content file
     filename = secure_filename(uploaded_file.filename)
     content = uploaded_file.read()
 
-    if len(content) >= 15728640:  # 15mb
+    if len(content) >= 15728640:     #15mb
         return redirect(url_for('home', status="fail", content="File too large (>15MB)"))
-
-    # gen Ksession and encrypted it with RSA
-    Ksession, en_ksession = cryptography.gen_session_key(
-        receiver["public_key"])
+    
+    #gen Ksession and encrypted it with RSA
+    Ksession, en_ksession = cryptography.gen_session_key(receiver["public_key"])
 
     cipher_text = cryptography.AES_encrypt(content, Ksession)
-
-    encrypt = b''.join([en_ksession, b'[+++++]', cipher_text])
-    app.logger.debug(print(encrypt, "====================="))
+        
+    encrypt = b''.join([en_ksession,b'[+++++]',cipher_text])
+    app.logger.debug(print(encrypt,"====================="))
 
     new_file = {
         "name": filename,
@@ -216,18 +212,16 @@ def upload_file():
 @app.route('/decrypt', methods=['GET', 'POST'])
 def decrypt_file():
     create_download_folder()
-    user = authorize()
 
     selected_file = []
 
     file = db.shared_file.find_one({"name": selected_file})
 
-    select = request.form.get('select')
-    print("select:", select)
     # e = encrypt.split(b'[+++++]')
     # app.logger.debug(print(e[0],"|||||||||||||||||||||||||||"))
     # app.logger.debug(print(e[1],"---------------------------"))
     #plain_text = cryptography.AES_decrypt(cipher_text, Ksession)
+
 
     return redirect(url_for('home', status="success", content="File has been decrypted"))
 
@@ -235,7 +229,7 @@ def decrypt_file():
 @app.route('/sign-on', methods=['GET', 'POST'])
 def sign_on_file():
     create_uploads_folder()
-
+    
     user = authorize()
 
     try:
