@@ -1,8 +1,4 @@
 import os
-
-from jinja2 import select_autoescape
-
-
 import installLib
 from form.authenForm import LoginForm, RegisterForm
 from form.changeInfoForm import ChangeInfoForm
@@ -36,12 +32,14 @@ app = Flask(__name__)
 # Flask-WTF requires an encryption key - the string can be anything
 app.config['SECRET_KEY'] = SECRET_KEY
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['DOWNLOAD_FOLDER'] = DOWNLOAD_FOLDER
 
 # create "uploads" folder
 
 
 def create_uploads_folder():
     os.path.exists(UPLOAD_FOLDER) or os.mkdir(UPLOAD_FOLDER)
+
 
 def create_download_folder():
     os.path.exists(DOWNLOAD_FOLDER) or os.mkdir(DOWNLOAD_FOLDER)
@@ -184,25 +182,25 @@ def upload_file():
     if receiver is None:
         return redirect(url_for('home', status="fail", content="This user does not exist!"))
 
-    #read content file
+    # read content file
     filename = secure_filename(uploaded_file.filename)
     content = uploaded_file.read()
 
-    if len(content) >= 15728640:     #15mb
+    if len(content) >= 15728640:  # 15mb
         return redirect(url_for('home', status="fail", content="File too large (>15MB)"))
-    
-    #gen Ksession and encrypted it with RSA
-    Ksession, en_ksession = cryptography.gen_session_key(receiver["public_key"])
 
-    cipher_text = cryptography.AES_encrypt(content, Ksession)
-        
-    encrypt = b''.join([en_ksession,b'[+++++]',cipher_text])
-    app.logger.debug(print(encrypt,"====================="))
+    # gen Ksession and encrypted it with RSA
+    ksession, en_ksession = cryptography.gen_session_key(
+        receiver["public_key"])
+
+    cipher_text = cryptography.AES_encrypt(content, ksession)
+
+    encrypted = b''.join([en_ksession, b'[+++++]', cipher_text])
 
     new_file = {
         "name": filename,
         "email": email,
-        "content": encrypt
+        "content": encrypted
     }
     db.shared_file.insert_one(new_file)
 
@@ -212,16 +210,24 @@ def upload_file():
 @app.route('/decrypt', methods=['GET', 'POST'])
 def decrypt_file():
     create_download_folder()
+    user = authorize()
+    #
+    select = request.form.get('select')
+    file = db.shared_file.find_one({"name": select})
 
-    selected_file = []
+    if file is None:
+        return redirect(url_for('home', status="fail", content="Please select 1 file"))
 
-    file = db.shared_file.find_one({"name": selected_file})
+    encrypted = file["content"].split(b'[+++++]')
+    en_ksession, cipher_text = encrypted[0] , encrypted[1]
+    #get private key
+    priv_key_pem = cryptography.AES_decrypt(user["private_key"], user["passphase"])
 
-    # e = encrypt.split(b'[+++++]')
-    # app.logger.debug(print(e[0],"|||||||||||||||||||||||||||"))
-    # app.logger.debug(print(e[1],"---------------------------"))
-    #plain_text = cryptography.AES_decrypt(cipher_text, Ksession)
+    ksession = cryptography.RSA_decrypt(en_ksession, priv_key_pem)
+    content = cryptography.AES_decrypt(cipher_text.decode(), ksession)
 
+    file_path = os.path.join(basedir,app.config['DOWNLOAD_FOLDER'], select)
+    open(file_path,'wb').write(content)
 
     return redirect(url_for('home', status="success", content="File has been decrypted"))
 
@@ -229,7 +235,7 @@ def decrypt_file():
 @app.route('/sign-on', methods=['GET', 'POST'])
 def sign_on_file():
     create_uploads_folder()
-    
+
     user = authorize()
 
     try:
