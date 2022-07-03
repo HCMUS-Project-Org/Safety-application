@@ -182,6 +182,9 @@ def upload_file():
     if receiver is None:
         return redirect(url_for('home', status="fail", content="This user does not exist!"))
 
+    if not uploaded_file:
+        return redirect(url_for('home', status="fail", content="Please select 1 file"))
+
     # read content file
     filename = secure_filename(uploaded_file.filename)
     content = uploaded_file.read()
