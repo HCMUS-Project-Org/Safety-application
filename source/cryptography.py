@@ -51,7 +51,6 @@ def RSA_encrypt(plain_text, pub_key_pem):
     if type(pub_key_pem) == str:
         pub_key_pem = byte_string_to_string(pub_key_pem)
 
-
     public_key = RSA.importKey(pub_key_pem)
     public_key = RSA.construct((public_key.n, public_key.e))
 
@@ -71,10 +70,12 @@ def RSA_decrypt(cipher_text, priv_key_pem):
 
     return decrypted
 
+
 def gen_session_key(pub_key):
-    session_key = base64.b64encode(os.urandom(32)).decode('utf-8') 
-    encrypted_session_key = RSA_encrypt(session_key,pub_key)
+    session_key = base64.b64encode(os.urandom(32)).decode('utf-8')
+    encrypted_session_key = RSA_encrypt(session_key, pub_key)
     return session_key, encrypted_session_key
+
 
 def AES_encrypt(plain_text, passphase):
     if type(plain_text) == bytes:
@@ -104,6 +105,7 @@ def AES_decrypt(cipher_text, passphrase):
 
 
 if __name__ == "__main__":
+    # For testing
     # get RSA pair key PEM
     publickeyPEM, privatekeyPEM = gen_RSA_key_pem()
 
@@ -111,8 +113,8 @@ if __name__ == "__main__":
     print(publickeyPEM)
     print(type(publickeyPEM))
 
-    a,b = gen_session_key(publickeyPEM)
-    print(a,"=========================================",b)
+    a, b = gen_session_key(publickeyPEM)
+    print(a, "=========================================", b)
 
     # encrypt Priv_ley_PEM with AES
     encrypted_priv_key = AES_encrypt(privatekeyPEM, "my password")

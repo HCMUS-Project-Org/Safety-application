@@ -52,6 +52,7 @@ try:
 except:
     app.logger.error("Can not connect MongoDB")
 
+
 Bootstrap(app)
 
 
@@ -222,15 +223,16 @@ def decrypt_file():
         return redirect(url_for('home', status="fail", content="Please select 1 file"))
 
     encrypted = file["content"].split(b'[+++++]')
-    en_ksession, cipher_text = encrypted[0] , encrypted[1]
-    #get private key
-    priv_key_pem = cryptography.AES_decrypt(user["private_key"], user["passphase"])
+    en_ksession, cipher_text = encrypted[0], encrypted[1]
+    # get private key
+    priv_key_pem = cryptography.AES_decrypt(
+        user["private_key"], user["passphase"])
 
     ksession = cryptography.RSA_decrypt(en_ksession, priv_key_pem)
     content = cryptography.AES_decrypt(cipher_text.decode(), ksession)
 
-    file_path = os.path.join(basedir,app.config['DOWNLOAD_FOLDER'], select)
-    open(file_path,'wb').write(content)
+    file_path = os.path.join(basedir, app.config['DOWNLOAD_FOLDER'], select)
+    open(file_path, 'wb').write(content)
 
     return redirect(url_for('home', status="success", content="File has been decrypted"))
 

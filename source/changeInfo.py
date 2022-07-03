@@ -32,6 +32,3 @@ def change_info(new_info, current_info):
     )
 
     session["user"] = json.dumps(new_info, default=str)
-
-
-# TODO: feature: change avatar
