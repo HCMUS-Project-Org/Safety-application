@@ -74,12 +74,13 @@ def RSA_decrypt(cipher_text, priv_key_pem):
 
 def AES_encrypt(plain_text, passphase):
     if type(plain_text) == bytes:
-        plain_text = plain_text.decode()
+        plain_text = plain_text.decode('iso-8859-1')
 
     private_key = hashlib.sha256(passphase.encode("utf-8")).digest()
-    plain_text = pad(plain_text).encode("utf-8")
+    plain_text = pad(plain_text).encode("iso-8859-1")
     iv = Random.new().read(AES.block_size)
     cipher = AES.new(private_key, AES.MODE_CBC, iv)
+
     return base64.b64encode(iv + cipher.encrypt(plain_text))
 
 
