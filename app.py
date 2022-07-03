@@ -201,14 +201,54 @@ def change_info():
 
 @app.route('/upload', methods=['GET', 'POST'])
 def upload_file():
-    pass
+    # check if email exist
+    email = request.form.get("email")
+    receiver = db.users.find_one({"email": email})
+    uploaded_file = request.files['file']
+
+    if receiver is None:
+        return redirect(url_for('home', status="fail", content="This user does not exist!"))
+
+    filename = secure_filename(uploaded_file.filename)
+    content = uploaded_file.read()
+    app.logger.debug(print(content))
+
+    cipher_text = cryptography.AES_encrypt(content, "mypassword")
+
+    #content16 = [bytes(content[i:i+32],"utf-8") for i in range(0,len(content),32)]
+    #app.logger.debug(print(content16))
+    app.logger.debug(print("-------------------------------"))
+    #cipher_text16 = []
+    #for i in range(len(content16)):
+        #cipher_text16.append(cryptography.AES_encrypt(content16[i], "mypassword"))
+    #cipher_text = b''.join(cipher_text16)
+    #app.logger.debug(print(cipher_text16))
+    #plain_text=[]
+    #for i in range(len(cipher_text16)):
+        #plain_text.append(cryptography.AES_decrypt(cipher_text16[i], "mypassword"))
+    plain_text = cryptography.AES_decrypt(cipher_text.decode("utf-8"),"mypassword") 
+    app.logger.debug(print(b''.join(plain_text)))
+    new_file = {
+        "name": filename,
+        "email": email,
+        "content": content
+    }
+
+
+
+    try:
+        pass
+        #db.shared_file.insert_one(new_file)
+    except:
+        pass
+
+    return redirect(url_for('home', status="success", content="File has been uploaded"))
 
 
 @app.route('/decrypt', methods=['GET', 'POST'])
 def decrypt_file():
     user = authorize()
-    pass
-
+    return redirect(url_for('home', status="success", content="File has been decrypted"))
 
 @app.route('/sign-on', methods=['GET', 'POST'])
 def sign_on_file():
