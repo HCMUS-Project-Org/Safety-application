@@ -1,4 +1,5 @@
 <h1 align="center">
+  <img src="./assets/app-logo.png" alt="icon" width="200"></img>
   <br>
   <b>Safe file sharing app</b>
 </h1>
@@ -10,12 +11,12 @@
     <a href="./document/PRJ1-Encryption.pdf">Project overview</a> •
     <a href="./document/Report.pdf">Report</a> •
     <a href="#key-features">Key Features</a> •
-    <a href="#getting-start">Getting Start</a> •
+    <a href="#getting-start">Getting Start</a>
   </b>
 </p>
 
 <p align="center">
-  <img src="./assets/Picture1.png" alt="UI"></img>
+  <img src="./assets/screenshot.png" alt="UI"></img>
 </p>
 
 ## Key Features
